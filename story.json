@@ -1,0 +1,70 @@
+{
+  "start": "start",
+  "nodes": {
+    "start": {
+      "text": "Der Weg nach Aldenmoor liegt vor dir, halb verschluckt vom Nebel. Seit drei Tagen bist du unterwegs, seit der Bote mit dem gebrochenen Siegel an deiner Tür stand. 'Der König braucht dich', hat er gesagt, mehr nicht. Am Wegrand, halb im Schlamm versunken, liegt eine verlassene Karre. Etwas glänzt darunter.",
+      "choices": [
+        { "text": "Die Karre untersuchen", "goto": "karre" },
+        { "text": "Weitergehen, keine Zeit verlieren", "goto": "weiter1" }
+      ]
+    },
+    "karre": {
+      "text": "Unter zerbrochenen Fassdauben findest du einen Dolch mit abgewetztem Griff, unscheinbar, aber gut in der Hand. Du steckst ihn ein und gehst weiter, ein ungutes Gefühl im Nacken.",
+      "setFlags": { "hatDolch": true },
+      "choices": [
+        { "text": "Weiter nach Aldenmoor", "goto": "weiter1" }
+      ]
+    },
+    "weiter1": {
+      "text": "Am Stadttor von Aldenmoor wird dein Name geprüft, zweimal. Die Wachen sind nervöser als sonst. Drinnen wartet bereits ein Bote des Hofmarschalls: 'Der König will dich sofort sehen. Aber der Kanzler auch - und der war zuerst hier.'",
+      "choices": [
+        { "text": "Zuerst zum König gehen", "goto": "koenig1", "setFlags": { "loyalZumKoenig": true } },
+        { "text": "Zuerst den Kanzler anhören", "goto": "kanzler1", "setFlags": { "misstrauischGegenKoenig": true } }
+      ]
+    },
+    "koenig1": {
+      "text": "Der König empfängt dich allein, ohne Gefolge. Das ist ungewöhnlich - und beunruhigend. 'Man plant, mich zu stürzen', sagt er leise. 'Ich brauche jemanden, der nicht Teil des Hofes ist.' Er reicht dir ein versiegeltes Schreiben.",
+      "setFlags": { "hatKoenigsBrief": true },
+      "choices": [
+        { "text": "Das Schreiben annehmen", "goto": "wendepunkt" },
+        { "text": "Nach Beweisen fragen, bevor du zusagst", "goto": "beweise" }
+      ]
+    },
+    "kanzler1": {
+      "text": "Der Kanzler empfängt dich in einem Raum voller Karten und Zahlen. 'Der König vertraut niemandem mehr, seit dem Tod seines Bruders', sagt er. 'Manche nennen das Vorsicht. Ich nenne es Paranoia, die uns alle noch das Leben kosten wird.'",
+      "choices": [
+        { "text": "Trotzdem zum König gehen", "goto": "koenig1" },
+        { "text": "Sich auf die Seite des Kanzlers stellen", "goto": "wendepunkt", "setFlags": { "loyalZumKanzler": true } }
+      ]
+    },
+    "beweise": {
+      "text": "'Beweise?', der König lacht bitter. 'Wenn ich Beweise hätte, bräuchte ich dich nicht.' Er sieht dich lange an. 'Aber gut - frag den Stallmeister nach dem dritten Pferd, das letzte Woche verschwunden ist.'",
+      "choices": [
+        { "text": "Das Schreiben trotzdem annehmen", "goto": "wendepunkt" }
+      ]
+    },
+    "wendepunkt": {
+      "text": "Drei Wochen später, tief in den Katakomben unter der Burg, stehst du vor einer Entscheidung, die sich nicht mehr rückgängig machen lässt. Vor dir liegt das Artefakt, von dem alle sprachen, ohne es je gesehen zu haben. Hinter dir hörst du Schritte - jemand ist dir gefolgt.",
+      "choices": [
+        { "text": "Das Artefakt nehmen und fliehen", "goto": "ende_flucht", "setFlags": { "hatArtefakt": true } },
+        { "text": "Dich der Person hinter dir stellen", "goto": "ende_konfrontation" },
+        { "text": "Das Artefakt zerstören", "goto": "ende_zerstoerung" }
+      ]
+    },
+    "ende_flucht": {
+      "text": "Du greifst nach dem Artefakt und rennst, ohne zurückzuschauen. Was hinter dir geschah, wirst du nie erfahren. Das Artefakt liegt schwer in deiner Tasche, während du Aldenmoor für immer hinter dir lässt.",
+      "isEnding": true,
+      "endingId": "flucht"
+    },
+    "ende_konfrontation": {
+      "text": "Du drehst dich um. Im Fackellicht erkennst du das Gesicht - eines, das du kennst. Was jetzt gesagt wird, entscheidet, ob diese Geschichte hier endet oder gerade erst beginnt.",
+      "isEnding": true,
+      "endingId": "konfrontation"
+    },
+    "ende_zerstoerung": {
+      "text": "Mit einem Schlag zerspringt das Artefakt in tausend Splitter, die im Fackellicht aufblitzen wie sterbende Sterne. Was auch immer für eine Macht darin schlummerte - sie ist jetzt für immer verloren. Manche würden sagen: zum Glück.",
+      "isEnding": true,
+      "endingId": "zerstoerung"
+    }
+  }
+}
