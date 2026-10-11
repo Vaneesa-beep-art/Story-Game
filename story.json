@@ -17,6 +17,9 @@
     },
     "weiter1": {
       "text": "Am Stadttor von Aldenmoor wird dein Name geprüft, zweimal. Die Wachen sind nervöser als sonst. Drinnen wartet bereits ein Bote des Hofmarschalls: 'Der König will dich sofort sehen. Aber der Kanzler auch - und der war zuerst hier.'",
+      "textIf": [
+        { "if": { "hatDolch": true }, "text": "Einer der Wachen mustert den Dolch an deinem Gürtel länger, als dir lieb ist. Er sagt nichts, aber er merkt sich dein Gesicht." }
+      ],
       "choices": [
         { "text": "Zuerst zum König gehen", "goto": "koenig1", "setFlags": { "loyalZumKoenig": true } },
         { "text": "Zuerst den Kanzler anhören", "goto": "kanzler1", "setFlags": { "misstrauischGegenKoenig": true } }
@@ -24,9 +27,12 @@
     },
     "koenig1": {
       "text": "Der König empfängt dich allein, ohne Gefolge. Das ist ungewöhnlich - und beunruhigend. 'Man plant, mich zu stürzen', sagt er leise. 'Ich brauche jemanden, der nicht Teil des Hofes ist.' Er reicht dir ein versiegeltes Schreiben.",
+      "textIf": [
+        { "if": { "misstrauischGegenKoenig": true }, "text": "Die Worte des Kanzlers hallen in deinem Kopf nach. Ist das hier Vorsicht - oder wirklich Paranoia?" }
+      ],
       "setFlags": { "hatKoenigsBrief": true },
       "choices": [
-        { "text": "Das Schreiben annehmen", "goto": "wendepunkt" },
+        { "text": "Das Schreiben annehmen", "goto": "wendepunkt", "setFlags": { "loyalZumKoenig": true } },
         { "text": "Nach Beweisen fragen, bevor du zusagst", "goto": "beweise" }
       ]
     },
@@ -40,31 +46,103 @@
     "beweise": {
       "text": "'Beweise?', der König lacht bitter. 'Wenn ich Beweise hätte, bräuchte ich dich nicht.' Er sieht dich lange an. 'Aber gut - frag den Stallmeister nach dem dritten Pferd, das letzte Woche verschwunden ist.'",
       "choices": [
-        { "text": "Das Schreiben trotzdem annehmen", "goto": "wendepunkt" }
+        { "text": "Den Stallmeister aufsuchen", "goto": "stallmeister", "setFlags": { "hatStallmeisterGesprochen": true } },
+        { "text": "Das Schreiben trotzdem annehmen", "goto": "wendepunkt", "setFlags": { "loyalZumKoenig": true } }
+      ]
+    },
+    "stallmeister": {
+      "text": "Der Stallmeister wird bleich, als du das dritte Pferd erwähnst. 'Der Kanzler hat es holen lassen', flüstert er. 'Nachts, durch das Hintertor. Es trug Kisten. Schwere Kisten.' Dann schickt er dich hastig weg.",
+      "setFlags": { "weissVonKisten": true },
+      "choices": [
+        { "text": "Zum König zurückkehren und das Schreiben annehmen", "goto": "wendepunkt", "setFlags": { "loyalZumKoenig": true } },
+        { "text": "Den Kanzler selbst zur Rede stellen", "goto": "wendepunkt", "setFlags": { "loyalZumKoenig": false, "wolltKanzlerStellen": true } }
       ]
     },
     "wendepunkt": {
       "text": "Drei Wochen später, tief in den Katakomben unter der Burg, stehst du vor einer Entscheidung, die sich nicht mehr rückgängig machen lässt. Vor dir liegt das Artefakt, von dem alle sprachen, ohne es je gesehen zu haben. Hinter dir hörst du Schritte - jemand ist dir gefolgt.",
+      "textIf": [
+        { "if": { "loyalZumKoenig": true }, "text": "In deiner Tasche liegt das Schreiben des Königs. Er hat dir aufgetragen, das Artefakt zu ihm zu bringen - und niemandem sonst." },
+        { "if": { "loyalZumKanzler": true }, "text": "Der Kanzler hat dir versichert, das Artefakt sei beim Hof besser aufgehoben als in den Händen eines misstrauischen Königs. Du hast ihm geglaubt - bis jetzt." },
+        { "if": { "weissVonKisten": true }, "text": "Du denkst an die schweren Kisten, die der Stallmeister erwähnt hat. Hier unten stehen genau solche, aufgebrochen und leer." },
+        { "if": { "hatDolch": true }, "text": "Deine Hand liegt wie von selbst auf dem Griff des alten Dolchs." }
+      ],
       "choices": [
         { "text": "Das Artefakt nehmen und fliehen", "goto": "ende_flucht", "setFlags": { "hatArtefakt": true } },
-        { "text": "Dich der Person hinter dir stellen", "goto": "ende_konfrontation" },
-        { "text": "Das Artefakt zerstören", "goto": "ende_zerstoerung" }
+        { "text": "Dich der Person hinter dir stellen", "goto": [
+          { "if": { "wolltKanzlerStellen": true }, "goto": "ende_kanzler_enttarnt" },
+          { "if": { "loyalZumKanzler": true }, "goto": "ende_verrat" },
+          { "if": { "hatDolch": true }, "goto": "ende_kampf" },
+          { "goto": "ende_konfrontation" }
+        ] },
+        { "text": "Das Artefakt zerstören", "goto": "ende_zerstoerung" },
+        { "text": "Das Artefakt wie befohlen zum König bringen", "requires": { "loyalZumKoenig": true }, "goto": [
+          { "if": { "weissVonKisten": true }, "goto": "ende_koenig_triumph" },
+          { "goto": "ende_koenig_blind" }
+        ] },
+        { "text": "Das Artefakt dem Kanzler übergeben", "requires": { "loyalZumKanzler": true }, "goto": "ende_kanzler_sieg" }
       ]
     },
     "ende_flucht": {
+      "title": "Ende: Die Flucht",
       "text": "Du greifst nach dem Artefakt und rennst, ohne zurückzuschauen. Was hinter dir geschah, wirst du nie erfahren. Das Artefakt liegt schwer in deiner Tasche, während du Aldenmoor für immer hinter dir lässt.",
+      "textIf": [
+        { "if": { "loyalZumKoenig": true }, "text": "Irgendwo in Aldenmoor wartet ein König auf einen Boten, der nie ankommen wird. Du hast sein Vertrauen gebrochen." },
+        { "if": { "loyalZumKanzler": true }, "text": "Der Kanzler wird dich jagen lassen. Du weißt zu viel, und du trägst, was er will." }
+      ],
       "isEnding": true,
       "endingId": "flucht"
     },
     "ende_konfrontation": {
+      "title": "Ende: Das bekannte Gesicht",
       "text": "Du drehst dich um. Im Fackellicht erkennst du das Gesicht - eines, das du kennst. Was jetzt gesagt wird, entscheidet, ob diese Geschichte hier endet oder gerade erst beginnt.",
       "isEnding": true,
       "endingId": "konfrontation"
     },
+    "ende_kampf": {
+      "title": "Ende: Der Dolch aus dem Schlamm",
+      "text": "Du drehst dich um, den Dolch schon in der Hand. Der Fremde zieht ebenfalls, schneller als erwartet - doch der abgewetzte Griff liegt besser in deiner Hand, als er sollte. Es dauert nur einen Atemzug. Als die Fackel wieder ruhig brennt, liegt der Verfolger am Boden. Unter seinem Mantel trägt er das Wappen des Kanzlers. Das Artefakt gehört nun dir. Was du damit tust, weißt du noch nicht.",
+      "isEnding": true,
+      "endingId": "kampf"
+    },
     "ende_zerstoerung": {
+      "title": "Ende: Splitter wie Sterne",
       "text": "Mit einem Schlag zerspringt das Artefakt in tausend Splitter, die im Fackellicht aufblitzen wie sterbende Sterne. Was auch immer für eine Macht darin schlummerte - sie ist jetzt für immer verloren. Manche würden sagen: zum Glück.",
+      "textIf": [
+        { "if": { "loyalZumKoenig": true }, "text": "Der König wird dir das nie verzeihen." },
+        { "if": { "loyalZumKanzler": true }, "text": "Die Schritte hinter dir verstummen. Der Kanzler wird keine Verwendung mehr für dich haben." }
+      ],
       "isEnding": true,
       "endingId": "zerstoerung"
+    },
+    "ende_koenig_blind": {
+      "title": "Ende: Der treue Bote",
+      "text": "Du bringst das Artefakt zum König, genau wie befohlen. Er nimmt es mit zitternden Händen entgegen und dankt dir, leise und ehrlich. In den Wochen danach merkst du, wie sich seine Paranoia verstärkt. Das Artefakt flüstert ihm Dinge zu. Du hast einen König gerettet - und vielleicht ein Monster geschaffen.",
+      "isEnding": true,
+      "endingId": "koenig_blind"
+    },
+    "ende_koenig_triumph": {
+      "title": "Ende: Die Wahrheit über die Kisten",
+      "text": "Du bringst das Artefakt zum König - und mit ihm das, was der Stallmeister dir erzählt hat. Mit den Aussagen über die Kisten kann der König den Kanzler vor dem versammelten Hof überführen. Die Verschwörung zerfällt noch am selben Abend. Der König ernennt dich zu seiner Vertrauten Hand, und zum ersten Mal seit dem Tod seines Bruders lächelt er.",
+      "isEnding": true,
+      "endingId": "koenig_triumph"
+    },
+    "ende_kanzler_sieg": {
+      "title": "Ende: Der neue Hof",
+      "text": "Du übergibst das Artefakt dem Kanzler. Er nickt zufrieden. Wenige Tage später ist der König 'erkrankt', und der Kanzler führt die Regierungsgeschäfte. Du erhältst einen Sitz im Rat und ein ruhiges Leben. Nur nachts denkst du manchmal an das Schreiben, das du nie abgegeben hast.",
+      "isEnding": true,
+      "endingId": "kanzler_sieg"
+    },
+    "ende_verrat": {
+      "title": "Ende: Der Preis der Loyalität",
+      "text": "Du drehst dich um, bereit, dem Kanzler zu erklären, dass du alles getan hast, was er wollte. Doch es ist nicht der Kanzler, der vor dir steht, sondern seine Leibwache. 'Er sagt, du weißt zu viel', sagt sie ohne Bedauern. Loyalität ist eine Währung, die nur in eine Richtung zählt.",
+      "isEnding": true,
+      "endingId": "verrat"
+    },
+    "ende_kanzler_enttarnt": {
+      "title": "Ende: Der Kanzler im Fackellicht",
+      "text": "Du drehst dich um, und es ist der Kanzler selbst, allein, ohne Gefolge. 'Der Stallmeister hat geredet, nicht wahr?', sagt er müde. Du hörst die Schritte weiterer Männer, die sich nähern. Doch du hast vorgesorgt: Der Stallmeister weiß, wo du bist, und der König wartet auf Nachricht. Der Kanzler sieht das in deinem Blick und lässt die Hand sinken. Manche Verschwörungen enden nicht mit einem Schwert, sondern mit einer Verhandlung.",
+      "isEnding": true,
+      "endingId": "kanzler_enttarnt"
     }
   }
 }
