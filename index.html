@@ -14,7 +14,18 @@
       <button id="save-btn">Als Datei speichern</button>
       <button id="load-btn">Aus Datei laden</button>
       <button id="restart-btn">Neu starten</button>
+      <button id="reset-endings-btn">Enden zurücksetzen</button>
       <input type="file" id="file-input" accept=".json" style="display:none" />
+    </div>
+  </div>
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <h2 id="modal-title">Enden zurücksetzen?</h2>
+      <p>Alle gefundenen Enden werden gelöscht und das Spiel startet neu.</p>
+      <div class="modal-actions">
+        <button id="modal-cancel">Abbrechen</button>
+        <button id="modal-confirm" class="danger">Zurücksetzen</button>
+      </div>
     </div>
   </div>
   <script src="game.js"></script>

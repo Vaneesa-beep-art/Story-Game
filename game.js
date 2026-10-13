@@ -10,6 +10,7 @@ const saveBtn = document.getElementById("save-btn");
 const loadBtn = document.getElementById("load-btn");
 const restartBtn = document.getElementById("restart-btn");
 const fileInput = document.getElementById("file-input");
+const resetEndingsBtn = document.getElementById("reset-endings-btn");
 
 function matches(cond) {
   if (!cond) return true;
@@ -65,7 +66,7 @@ function render() {
     choicesEl.innerHTML = "";
     return;
   }
-
+  
   const parts = [node.text];
   (node.textIf || []).forEach((t) => {
     if (matches(t.if)) parts.push(t.text);
@@ -83,7 +84,7 @@ function render() {
     const endDiv = document.createElement("div");
     endDiv.className = "ending-label";
     endDiv.textContent =
-      "~ " + (node.title || "Ende erreicht") + " ~  (Enden gefunden: " +
+      (node.title || "Ende erreicht") + " ~  (Enden gefunden: " +
       seen.length + " von " + totalEndings() + ")";
     choicesEl.appendChild(endDiv);
     localStorage.removeItem(SAVE_KEY);
@@ -146,7 +147,36 @@ function restart() {
   enterNode(story.start, false);
 }
 
+const modal = document.getElementById("modal");
+const modalCancel = document.getElementById("modal-cancel");
+const modalConfirm = document.getElementById("modal-confirm");
+
+function openModal() {
+  modal.classList.remove("hidden");
+  modalCancel.focus();
+}
+
+function closeModal() {
+  modal.classList.add("hidden");
+}
+
+function resetEndings() {
+  localStorage.removeItem(ENDINGS_KEY);
+  closeModal();
+  restart();
+}
+
+modalCancel.addEventListener("click", closeModal);
+modalConfirm.addEventListener("click", resetEndings);
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) closeModal(); // Klick auf den dunklen Hintergrund
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeModal();
+});
+
 saveBtn.addEventListener("click", exportSave);
+resetEndingsBtn.addEventListener("click", openModal);
 loadBtn.addEventListener("click", () => fileInput.click());
 fileInput.addEventListener("change", (e) => {
   if (e.target.files.length > 0) importSave(e.target.files[0]);
